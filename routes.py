@@ -4,11 +4,11 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from .config import settings
-from .database import get_db
-from .gemini_service import GeminiService, GeminiServiceError
-from .models import User, WorkoutPlan
-from .schemas import FeedbackRequest, UserInput
+from config import settings
+from database import get_db
+from gemini_service import GeminiService, GeminiServiceError
+from models import User, WorkoutPlan
+from schemas import FeedbackRequest, UserInput
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
