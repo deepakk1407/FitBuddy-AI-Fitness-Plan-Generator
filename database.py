@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
-from .config import settings
+from config import settings
 
 
 connect_args = {"check_same_thread": False} if settings.database_url.startswith("sqlite") else {}
@@ -21,5 +21,5 @@ def get_db():
 
 
 def init_db() -> None:
-    from .models import User, WorkoutPlan  # noqa: F401
+    from models import User, WorkoutPlan  # noqa: F401
     Base.metadata.create_all(bind=engine)
