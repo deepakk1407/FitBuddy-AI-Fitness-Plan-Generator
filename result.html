@@ -1,0 +1,1056 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ user.name if user else "FitBuddy" }} - Your Plan
+{% endblock %}
+
+{% block content %}
+
+<div class="result-page">
+
+    {% if error %}
+    <div class="alert error">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    {% if message %}
+    <div class="alert success">
+        {{ message }}
+    </div>
+    {% endif %}
+
+
+    {% if user and plan %}
+
+    {# -------------------------------------------------
+       PLAN DATA
+       ------------------------------------------------- #}
+
+    {% set plan_text = plan.updated_plan or plan.original_plan %}
+
+
+    <!-- ================================
+         HERO
+    ================================= -->
+
+    <section class="result-hero">
+
+        <div class="hero-left">
+
+            <div class="eyebrow">
+                PERSONALIZED AI FITNESS PLAN
+            </div>
+
+            <h1>
+                Hey, {{ user.name }} 👋
+            </h1>
+
+            <p>
+                Your personalized 7-day workout plan is ready.
+                Built around your fitness goal and preferred intensity.
+            </p>
+
+            <div class="hero-tags">
+
+                <span>
+                    🎯 {{ user.goal|title }}
+                </span>
+
+                <span>
+                    ⚡ {{ user.intensity|title }}
+                </span>
+
+                <span>
+                    📅 7 Days
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="hero-stats">
+
+            <div class="hero-stat">
+                <strong>{{ user.age }}</strong>
+                <span>Age</span>
+            </div>
+
+            <div class="hero-stat">
+                <strong>{{ user.weight }}</strong>
+                <span>kg</span>
+            </div>
+
+            <div class="hero-stat">
+                <strong>7</strong>
+                <span>Days</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    {% if plan.updated_plan %}
+    <div class="alert success update-message">
+        ✅ Your workout plan has been updated based on your feedback.
+    </div>
+    {% endif %}
+
+
+    <!-- ================================
+         MAIN LAYOUT
+    ================================= -->
+
+    <div class="result-layout">
+
+
+        <!-- ================================
+             LEFT SIDE
+        ================================= -->
+
+        <main class="result-main">
+
+
+            <!-- OVERVIEW -->
+
+            <section class="result-card">
+
+                <div class="card-title">
+
+                    <div class="title-icon">
+                        📋
+                    </div>
+
+                    <div>
+                        <h2>Plan Overview</h2>
+                        <p>Your personalized fitness strategy</p>
+                    </div>
+
+                </div>
+
+                <p id="plan-overview" class="overview-text">
+                    Loading your plan...
+                </p>
+
+            </section>
+
+
+            <!-- SAFETY -->
+
+            <section class="result-card safety-box">
+
+                <div class="card-title">
+
+                    <div class="title-icon">
+                        ⚠️
+                    </div>
+
+                    <div>
+                        <h2>Safety Note</h2>
+                        <p>Important guidance before starting</p>
+                    </div>
+
+                </div>
+
+                <p id="plan-safety">
+                    Loading...
+                </p>
+
+            </section>
+
+
+            <!-- WORKOUT -->
+
+            <section>
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <div class="eyebrow dark-eyebrow">
+                            YOUR PROGRAM
+                        </div>
+
+                        <h2>
+                            7-Day Workout Plan
+                        </h2>
+
+                    </div>
+
+                    <span class="ai-badge">
+                        🤖 AI Generated
+                    </span>
+
+                </div>
+
+
+                <div id="workout-days">
+
+                    <div class="loading-box">
+                        Loading your workout plan...
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+
+        <!-- ================================
+             RIGHT SIDE
+        ================================= -->
+
+        <aside class="result-sidebar">
+
+
+            <!-- NUTRITION -->
+
+            <section class="result-card nutrition-card">
+
+                <div class="card-title">
+
+                    <div class="title-icon">
+                        🥗
+                    </div>
+
+                    <div>
+                        <h2>Nutrition & Recovery</h2>
+                        <p>Support your workout journey</p>
+                    </div>
+
+                </div>
+
+
+                <div class="nutrition-item">
+
+                    <div class="nutrition-icon">
+                        💡
+                    </div>
+
+                    <div>
+
+                        <strong>Tip</strong>
+
+                        <p id="nutrition-tip-text">
+                            Loading...
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="nutrition-item">
+
+                    <div class="nutrition-icon">
+                        💧
+                    </div>
+
+                    <div>
+
+                        <strong>Hydration</strong>
+
+                        <p id="nutrition-hydration">
+                            Loading...
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="nutrition-item">
+
+                    <div class="nutrition-icon">
+                        😴
+                    </div>
+
+                    <div>
+
+                        <strong>Recovery</strong>
+
+                        <p id="nutrition-recovery">
+                            Loading...
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- FEEDBACK -->
+
+            <section class="result-card feedback-card">
+
+                <div class="card-title">
+
+                    <div class="title-icon">
+                        💬
+                    </div>
+
+                    <div>
+                        <h2>Refine Your Plan</h2>
+                        <p>Tell FitBuddy what to change</p>
+                    </div>
+
+                </div>
+
+
+                <p class="feedback-description">
+                    Want more cardio, another rest day,
+                    or different exercises? Tell FitBuddy.
+                </p>
+
+
+                <form
+                    action="/submit-feedback"
+                    method="post"
+                    data-loading-form
+                >
+
+                    <input
+                        type="hidden"
+                        name="user_id"
+                        value="{{ user.user_id }}"
+                    >
+
+                    <textarea
+                        name="feedback"
+                        rows="5"
+                        required
+                        minlength="5"
+                        maxlength="2000"
+                        placeholder="Example: Add more cardio exercises..."
+                    ></textarea>
+
+                    <button
+                        class="btn primary full"
+                        type="submit"
+                    >
+                        Update Plan →
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <!-- CREATE NEW PLAN -->
+
+            <a
+                href="/"
+                class="btn secondary full"
+            >
+                ← Create Another Plan
+            </a>
+
+        </aside>
+
+    </div>
+
+
+    <!-- =====================================================
+         AI JSON
+         
+         IMPORTANT:
+         DO NOT use |safe here.
+         tojson safely sends the JSON to JavaScript.
+    ====================================================== -->
+
+    <script id="fitbuddy-plan-data" type="application/json">
+        {{ plan_text | tojson }}
+    </script>
+
+
+    <!-- =====================================================
+         NUTRITION JSON
+    ====================================================== -->
+
+    <script id="fitbuddy-nutrition-data" type="application/json">
+        {{ plan.nutrition_tip | tojson }}
+    </script>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        console.log("FitBuddy result page loaded");
+
+
+        /* =========================================
+           HELPER
+        ========================================= */
+
+        function parsePossibleJSON(value) {
+
+            if (value === null || value === undefined) {
+                return null;
+            }
+
+            if (typeof value === "object") {
+                return value;
+            }
+
+            if (typeof value === "string") {
+
+                let text = value.trim();
+
+                if (!text) {
+                    return null;
+                }
+
+                /*
+                 * Remove markdown JSON fences if Gemini
+                 * accidentally returns them.
+                 */
+
+                text = text
+                    .replace(/^```json\s*/i, "")
+                    .replace(/^```\s*/i, "")
+                    .replace(/\s*```$/i, "")
+                    .trim();
+
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+
+                    console.warn(
+                        "Could not parse JSON:",
+                        text
+                    );
+
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
+
+        /* =========================================
+           READ PLAN JSON
+        ========================================= */
+
+        const planElement =
+            document.getElementById(
+                "fitbuddy-plan-data"
+            );
+
+
+        if (!planElement) {
+
+            console.error(
+                "FitBuddy plan data element missing."
+            );
+
+            return;
+        }
+
+
+        let rawPlan =
+            planElement.textContent.trim();
+
+
+        let plan =
+            parsePossibleJSON(rawPlan);
+
+
+        /*
+         * Sometimes Jinja tojson gives a JSON string
+         * containing another JSON string.
+         */
+
+        if (typeof plan === "string") {
+
+            plan =
+                parsePossibleJSON(plan);
+        }
+
+
+        console.log(
+            "Parsed FitBuddy plan:",
+            plan
+        );
+
+
+        if (
+            !plan ||
+            typeof plan !== "object"
+        ) {
+
+            document.getElementById(
+                "workout-days"
+            ).innerHTML = `
+                <div class="alert error">
+                    Unable to read the AI-generated plan.
+                    Please generate the plan again.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        /* =========================================
+           OVERVIEW
+        ========================================= */
+
+        const overview =
+            document.getElementById(
+                "plan-overview"
+            );
+
+
+        if (overview) {
+
+            overview.textContent =
+                plan.overview ||
+                "Your personalized 7-day workout plan is ready.";
+
+        }
+
+
+        /* =========================================
+           SAFETY
+        ========================================= */
+
+        const safety =
+            document.getElementById(
+                "plan-safety"
+            );
+
+
+        if (safety) {
+
+            safety.textContent =
+                plan.safety_note ||
+                "Exercise safely and stop if you experience pain.";
+
+        }
+
+
+        /* =========================================
+           NUTRITION
+        ========================================= */
+
+        const nutritionElement =
+            document.getElementById(
+                "fitbuddy-nutrition-data"
+            );
+
+
+        let nutrition = null;
+
+
+        if (nutritionElement) {
+
+            const rawNutrition =
+                nutritionElement.textContent.trim();
+
+            nutrition =
+                parsePossibleJSON(
+                    rawNutrition
+                );
+
+        }
+
+
+        /*
+         * Sometimes nutrition is inside
+         * the main AI JSON.
+         */
+
+        if (
+            !nutrition &&
+            plan.nutrition_tip
+        ) {
+
+            nutrition =
+                parsePossibleJSON(
+                    plan.nutrition_tip
+                );
+
+        }
+
+
+        if (
+            nutrition &&
+            typeof nutrition === "object"
+        ) {
+
+            const tip =
+                document.getElementById(
+                    "nutrition-tip-text"
+                );
+
+            const hydration =
+                document.getElementById(
+                    "nutrition-hydration"
+                );
+
+            const recovery =
+                document.getElementById(
+                    "nutrition-recovery"
+                );
+
+
+            if (tip) {
+
+                tip.textContent =
+                    nutrition.tip ||
+                    "Maintain balanced nutrition.";
+
+            }
+
+
+            if (hydration) {
+
+                hydration.textContent =
+                    nutrition.hydration ||
+                    "Stay hydrated throughout the day.";
+
+            }
+
+
+            if (recovery) {
+
+                recovery.textContent =
+                    nutrition.recovery ||
+                    "Allow enough time for recovery.";
+
+            }
+
+        }
+        else {
+
+            document.getElementById(
+                "nutrition-tip-text"
+            ).textContent =
+                "Eat balanced meals with enough protein and vegetables.";
+
+            document.getElementById(
+                "nutrition-hydration"
+            ).textContent =
+                "Drink water regularly throughout the day.";
+
+            document.getElementById(
+                "nutrition-recovery"
+            ).textContent =
+                "Prioritize good sleep and recovery.";
+
+        }
+
+
+        /* =========================================
+           WORKOUT DAYS
+        ========================================= */
+
+        const daysContainer =
+            document.getElementById(
+                "workout-days"
+            );
+
+
+        if (!daysContainer) {
+            return;
+        }
+
+
+        daysContainer.innerHTML = "";
+
+
+        if (
+            !Array.isArray(plan.days) ||
+            plan.days.length === 0
+        ) {
+
+            daysContainer.innerHTML = `
+                <div class="alert error">
+                    No workout days were returned
+                    by the AI.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        /* =========================================
+           CREATE EACH DAY
+        ========================================= */
+
+        plan.days.forEach(function (day, dayIndex) {
+
+
+            const dayCard =
+                document.createElement("article");
+
+            dayCard.className =
+                "workout-day";
+
+
+            /* DAY HEADER */
+
+            const dayHeader =
+                document.createElement("div");
+
+            dayHeader.className =
+                "workout-day-header";
+
+
+            const dayNumber =
+                document.createElement("div");
+
+            dayNumber.className =
+                "day-number";
+
+            dayNumber.textContent =
+                String(dayIndex + 1)
+                    .padStart(2, "0");
+
+
+            const dayInfo =
+                document.createElement("div");
+
+
+            const dayTitle =
+                document.createElement("h3");
+
+            dayTitle.textContent =
+                day.day ||
+                "Day " + (dayIndex + 1);
+
+
+            const focus =
+                document.createElement("p");
+
+            focus.textContent =
+                day.focus ||
+                "Workout";
+
+
+            dayInfo.appendChild(
+                dayTitle
+            );
+
+            dayInfo.appendChild(
+                focus
+            );
+
+
+            dayHeader.appendChild(
+                dayNumber
+            );
+
+            dayHeader.appendChild(
+                dayInfo
+            );
+
+
+            dayCard.appendChild(
+                dayHeader
+            );
+
+
+            /* WARM UP */
+
+            const warmup =
+                document.createElement("div");
+
+            warmup.className =
+                "activity-box warmup-box";
+
+
+            warmup.innerHTML = `
+                <div class="activity-icon">
+                    🔥
+                </div>
+
+                <div>
+                    <strong>Warm-up</strong>
+                    <p></p>
+                </div>
+            `;
+
+
+            warmup.querySelector("p")
+                .textContent =
+                day.warmup ||
+                "5 minutes of light movement.";
+
+
+            dayCard.appendChild(
+                warmup
+            );
+
+
+            /* EXERCISE HEADING */
+
+            const exerciseHeading =
+                document.createElement("h4");
+
+            exerciseHeading.className =
+                "exercise-heading";
+
+            exerciseHeading.textContent =
+                "💪 Exercises";
+
+
+            dayCard.appendChild(
+                exerciseHeading
+            );
+
+
+            /* EXERCISE LIST */
+
+            const exerciseList =
+                document.createElement("div");
+
+            exerciseList.className =
+                "exercise-list";
+
+
+            if (
+                Array.isArray(day.exercises)
+            ) {
+
+
+                day.exercises.forEach(
+                    function (
+                        exercise,
+                        exerciseIndex
+                    ) {
+
+
+                        const exerciseCard =
+                            document.createElement(
+                                "div"
+                            );
+
+                        exerciseCard.className =
+                            "exercise-card";
+
+
+                        /* NUMBER */
+
+                        const exerciseNumber =
+                            document.createElement(
+                                "div"
+                            );
+
+                        exerciseNumber.className =
+                            "exercise-number";
+
+                        exerciseNumber.textContent =
+                            exerciseIndex + 1;
+
+
+                        /* INFO */
+
+                        const exerciseInfo =
+                            document.createElement(
+                                "div"
+                            );
+
+                        exerciseInfo.className =
+                            "exercise-info";
+
+
+                        /* NAME */
+
+                        const exerciseName =
+                            document.createElement(
+                                "h4"
+                            );
+
+                        exerciseName.textContent =
+                            exercise.name ||
+                            "Exercise";
+
+
+                        /* META */
+
+                        const meta =
+                            document.createElement(
+                                "div"
+                            );
+
+                        meta.className =
+                            "exercise-meta";
+
+
+                        const sets =
+                            document.createElement(
+                                "span"
+                            );
+
+                        sets.textContent =
+                            "Sets: " +
+                            (
+                                exercise.sets ??
+                                "-"
+                            );
+
+
+                        const reps =
+                            document.createElement(
+                                "span"
+                            );
+
+                        reps.textContent =
+                            "Reps: " +
+                            (
+                                exercise.reps_or_duration ||
+                                "-"
+                            );
+
+
+                        const rest =
+                            document.createElement(
+                                "span"
+                            );
+
+                        rest.textContent =
+                            "Rest: " +
+                            (
+                                exercise.rest ||
+                                "-"
+                            );
+
+
+                        meta.appendChild(
+                            sets
+                        );
+
+                        meta.appendChild(
+                            reps
+                        );
+
+                        meta.appendChild(
+                            rest
+                        );
+
+
+                        /* NOTES */
+
+                        const notes =
+                            document.createElement(
+                                "p"
+                            );
+
+                        notes.className =
+                            "exercise-notes";
+
+                        notes.textContent =
+                            exercise.notes ||
+                            "";
+
+
+                        exerciseInfo.appendChild(
+                            exerciseName
+                        );
+
+                        exerciseInfo.appendChild(
+                            meta
+                        );
+
+                        if (
+                            exercise.notes
+                        ) {
+
+                            exerciseInfo.appendChild(
+                                notes
+                            );
+
+                        }
+
+
+                        exerciseCard.appendChild(
+                            exerciseNumber
+                        );
+
+                        exerciseCard.appendChild(
+                            exerciseInfo
+                        );
+
+
+                        exerciseList.appendChild(
+                            exerciseCard
+                        );
+
+                    }
+                );
+
+            }
+
+
+            dayCard.appendChild(
+                exerciseList
+            );
+
+
+            /* COOLDOWN */
+
+            const cooldown =
+                document.createElement("div");
+
+            cooldown.className =
+                "activity-box cooldown-box";
+
+
+            cooldown.innerHTML = `
+                <div class="activity-icon">
+                    ❄️
+                </div>
+
+                <div>
+                    <strong>Cooldown</strong>
+                    <p></p>
+                </div>
+            `;
+
+
+            cooldown.querySelector("p")
+                .textContent =
+                day.cooldown ||
+                "5 minutes of gentle stretching.";
+
+
+            dayCard.appendChild(
+                cooldown
+            );
+
+
+            /* ADD DAY */
+
+            daysContainer.appendChild(
+                dayCard
+            );
+
+        });
+
+
+        console.log(
+            "FitBuddy plan rendered successfully."
+        );
+
+    });
+
+    </script>
+
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
