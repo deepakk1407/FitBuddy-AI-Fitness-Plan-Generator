@@ -7,8 +7,8 @@ try:
 except ImportError:  # Allows local unit tests to run before optional AI dependency is installed.
     genai = None
     types = None
-from .config import settings
-from .schemas import NutritionTip, UserInput, WorkoutPlan
+from config import settings
+from schemas import NutritionTip, UserInput, WorkoutPlan
 
 
 class GeminiServiceError(RuntimeError):
